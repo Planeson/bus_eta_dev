@@ -1,5 +1,10 @@
 Made by Marco Leung and Nicholas Chan did some shit to it
 
+**Screenshot**
+![Screenshot](screenshot.jpg)
+Meant to be used on a 1080p monitor, but the screenshot was taken with a 1440p monitor.
+
+Clock function coming soon
 
 Citybus shit
 https://www.citybus.com.hk/datagovhk/bus_eta_api_specifications.pdf
