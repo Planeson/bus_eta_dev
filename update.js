@@ -206,7 +206,7 @@ $(document).ready( () =>{
 	startClock();
 })
 
-async function fetchTime(retries = 10, delay = 1000) {
+async function fetchTime(retries = 30, delay = 200) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
             let response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Hong_Kong', { cache: "no-store" });
@@ -226,9 +226,10 @@ async function fetchTime(retries = 10, delay = 1000) {
 }
 
 async function startClock() {
-    let currentTime = await fetchTime();
-	document.getElementById('timeSynced').innerText = "Last synced: "+currentTime.toLocaleTimeString();
-
+    let currentTime = await fetchTime();	
+	document.getElementById('timeSynced').innerText = "Last synced: " + currentTime.toLocaleTimeString();
+	console.log("Time synced successfully at: " + currentTime.toLocaleTimeString());
+	
     function updateClock() {
         currentTime = new Date(currentTime.getTime() + 1000);
         document.getElementById('time').innerText = currentTime.toLocaleTimeString();
@@ -244,8 +245,10 @@ async function startClock() {
 	// Resync every hour
     setInterval(async () => {
         console.log("Resyncing clock...");
-        currentTime = await fetchHKTime();
-    }, 5 * 60 * 1000); // 60 minutes * 60 seconds * 1000 ms
+        currentTime = await fetchTime();
+		document.getElementById('timeSynced').innerText = "Last synced: "+currentTime.toLocaleTimeString();
+		console.log("Synced successfully at: " + currentTime.toLocaleTimeString());
+    }, 60 * 60 * 1000); // 60 minutes * 60 seconds * 1000 ms
 }
 
 // Update the time immediately
