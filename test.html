@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synced Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            font-size: 3rem;
+            background-color: #222;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="clock">Loading...</div>
+    
+    <script>
+    async function fetchTime() {
+        try {
+            let response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
+            let data = await response.json();
+            return new Date(data.utc_datetime);
+        } catch (error) {
+            console.error("Failed to fetch time", error);
+            return new Date();
+        }
+    }
+
+    async function startClock() {
+        let currentTime = await fetchTime();
+
+        function updateClock() {
+            currentTime = new Date(currentTime.getTime() + 1000);
+            document.getElementById('clock').innerText = currentTime.toLocaleTimeString();
+        }
+
+        // Align first update with the next full second
+        let msToNextSecond = 1000 - (currentTime.getMilliseconds());
+        setTimeout(() => {
+            updateClock(); // First update precisely at the next full second
+            setInterval(updateClock, 1000);
+        }, msToNextSecond);
+    }
+
+    startClock();
+</script>
+
+</body>
+</html>
