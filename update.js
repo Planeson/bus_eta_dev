@@ -193,6 +193,12 @@ content = {
         url: "",
         type: "ctb",
         content: "",
+    },
+
+    "--": {
+        url: "",
+        type: "",
+        content: "--",
     }
 };
 
@@ -218,10 +224,34 @@ layoutList = {
     // works on overriding, first element overrides second and so on elements
     // date of week dow : 0 Sun, 1 Mon
 
-    // midnight 2 for 11S -> CHH 0000 dept
-    // midnight 1 for 11S -> HAH 0030 dept
-    midnight2: {},
-    midnight1: {},
+    // midnight 2 for 11S -> HAH 0030 dept
+    // midnight 1 for 11S -> CHH 0000 dept
+    midnight2: {
+        dow: [-1, 0, 1, 2, 3, 4, 5, 6],
+        startTime: [0, 30],
+        endTime: [5, 50],
+        layout: {
+            S1: ["11SZ"],
+            S2: ["--"],
+            S3: ["--"],
+            N1: ["11SY"],
+            N2: ["--"],
+            N3: ["--"],
+        }
+    },
+    midnight1: {
+        dow: [-1, 0, 1, 2, 3, 4, 5, 6],
+        startTime: [0, 0],
+        endTime: [5, 50],
+        layout: {
+            S1: ["11SZ"],
+            S2: ["--"],
+            S3: ["--"],
+            N1: ["11SY"],
+            N2: ["--"],
+            N3: ["--"],
+        }
+    },
     // return peak -> 91P + 291P (lol)
     peak: {
         dow: [1, 2, 3, 4, 5],
@@ -254,22 +284,48 @@ layoutList = {
 
 // todo: add layouts, fix seconds, move parsing out, change content[key].content to eta timestamp, then move screen update out of api calls
 
+// pull layout out to reduce access depth
+layout = {
+    S1: ["91MZ"],
+    S2: ["91Z"],
+    S3: ["11Z", "11Z", "104Y"],
+    N1: ["792MZ"],
+    N2: ["91MY"],
+    N3: ["11MZ", "11Y"],
+};
+
+async function updateLayout() {
+    for (const [layoutKey, layoutAtt] of Object.entries(layoutList)) {
+        if (layoutAtt.dow.includes(dateDoW)
+            && layoutAtt.startTime[0] <= dateHour
+            && layoutAtt.startTime[1] <= dateMinute
+            && layoutAtt.endTime[0] >= dateHour
+            && layoutAtt.endTime[1] >= dateMinute) {
+            layout = layoutAtt.layout;
+            return;
+        }
+    }
+}
+
 // REWRITE
 // first put fetched data into content, then pull from content and cal on it
-async function updateLayout() {
-    for (const [layoutKey, rtList] of Object.entries(layoutList.peak.layout)) {
+async function updateData() {
+    for (const [layoutKey, rtList] of Object.entries(layout)) {
         const displayTime = 3 // 2 seconds each for flipping displays
         cycleLength = displayTime * rtList.length;
-        rtNum = rtList[(dateSecond % cycleLength) / displayTime];
-        updateStation(rtNum);
-        document.getElementById(layoutKey).innerText = content[rtNum].content;
-        document.getElementById(layoutKey + "Num").innerText = rtNum;
+        rtNum = rtList[Math.floor((dateSecond % cycleLength) / displayTime)];
+        if (rtNum != "") {
+            updateStation(rtNum);
+            document.getElementById(layoutKey).innerText = content[rtNum].content;
+            document.getElementById(layoutKey + "Num").innerText = rtNum;
+        }
     }
 }
 
 // REWRITE
 // takes url and puts eta timestamp into content
 async function updateStation(routeNum) {
+    if (routeNum == "--") { return; }
     try {
         const response = await fetch(content[routeNum].url);
         if (!response.ok) {
@@ -287,7 +343,7 @@ async function updateStation(routeNum) {
                 time_diff = Date.parse(eta_str) - new Date()
             }
 
-            eta = (Math.floor(time_diff / 60000)).toString() + ":" + (Math.floor(time_diff / 1000) % 60).toString();
+            eta = (Math.floor(time_diff / 60000)).toString() + ":" + (Math.floor(time_diff / 1000) % 60).toString().padStart(2, '0');
 
         }
 
@@ -301,7 +357,7 @@ async function updateStation(routeNum) {
                 time_diff = Date.parse(eta_str) - new Date()
             }
 
-            eta = (Math.floor(time_diff / 60000)).toString() + ":" + (Math.floor(time_diff / 1000) % 60).toString();
+            eta = (Math.floor(time_diff / 60000)).toString() + ":" + (Math.floor(time_diff / 1000) % 60).toString().padStart(2, '0');
 
         }
         else if (content[routeNum]["type"] == "ctb") {
@@ -314,7 +370,7 @@ async function updateStation(routeNum) {
                 time_diff = Date.parse(eta_str) - new Date()
             }
 
-            eta = (Math.floor(time_diff / 60000)).toString() + ":" + (Math.floor(time_diff / 1000) % 60).toString();
+            eta = (Math.floor(time_diff / 60000)).toString() + ":" + (Math.floor(time_diff / 1000) % 60).toString().padStart(2, '0');
 
         }
         content[routeNum].content = eta;
@@ -367,7 +423,10 @@ async function startClock() {
         // update global Day of Week, Hour, and Minute
         dateDoW = currentTime.getDay();
         dateHour = currentTime.getHours();
-        dateMinute = currentTime.getMinutes();
+        if (dateMinute != currentTime.getMinutes()) {
+            dateMinute = currentTime.getMinutes();
+            updateLayout();
+        }
         dateSecond = currentTime.getSeconds();
     }
 
@@ -375,8 +434,8 @@ async function startClock() {
     let msToNextSecond = 1000 - (currentTime.getMilliseconds());
     setTimeout(() => {
         updateClock(); // First update precisely at the next full second
-        setInterval(updateLayout, 1000);
         setInterval(updateClock, 1000);
+        setInterval(updateData, 1000);
     }, msToNextSecond);
 
     // Resync every hour
