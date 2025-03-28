@@ -1,6 +1,15 @@
 station_list = {
 
-    "11Z":{
+    "11Y": {
+        "name": "11Y",
+        "gate": "N",
+        "route-id": "2004791",
+        "route-seq": "2",
+        "stop-seq": "10",
+        "type": "gmb"
+    },
+
+    "11Z": {
         "name": "11Z",
         "gate": "S",
         "route-id": "2004791",
@@ -9,17 +18,17 @@ station_list = {
         "type": "gmb"
     },
 
-    "11MZ":{
+    "11MZ": {
         "name": "11MZ",
         "gate": "N",
         "route-id": "2004825",
         "route-seq": "1",
         "stop-seq": "3",
         "type": "gmb"
-	},
-	
+    },
 
-    "11SY":{
+
+    "11SY": {
         "name": "11SY",
         "gate": "N",
         "route-id": "2004826",
@@ -28,7 +37,7 @@ station_list = {
         "type": "gmb"
     },
 
-    "11SZ":{
+    "11SZ": {
         "name": "11SZ",
         "gate": "S",
         "route-id": "2004826",
@@ -37,7 +46,7 @@ station_list = {
         "type": "gmb"
     },
 
-    "91Z":{
+    "91Z": {
         "name": "91Z",
         "gate": "S",
         "route-id": "91",
@@ -47,17 +56,17 @@ station_list = {
 
     },
 
-    "91MY":{
+    "91MY": {
         "name": "91MY",
         "gate": "N",
         "route-id": "91M",
         "route-seq": "2",
         "stop-id": "B3E60EE895DBBF06",
         "type": "kmb"
-	
+
     },
 
-    "91MZ":{
+    "91MZ": {
         "name": "91MZ",
         "gate": "S",
         "route-id": "91M",
@@ -67,7 +76,7 @@ station_list = {
 
     },
 
-    "91PZ":{
+    "91PZ": {
         "name": "91PZ",
         "gate": "S",
         "route-id": "91P",
@@ -77,7 +86,17 @@ station_list = {
 
     },
 
-    "792MZ":{
+    "291PY": {
+        "name": "291PY",
+        "gate": "S",
+        "route-id": "291P",
+        "route-seq": "1",
+        "stop-id": "E9018F8A7E096544",
+        "type": "kmb"
+
+    },
+
+    "792MZ": {
         "name": "792MZ",
         "gate": "N",
         "route-id": "792M",
@@ -88,123 +107,243 @@ station_list = {
     }
 };
 
-precalStationList = [];
+content = {
+    "11Y": {
+        url: "",
+        type: "gmb",
+        content: "",
+    },
 
-function precalStation(stnList){
-	// consider moving this out such that each route calls precal once
-    stnList.forEach((curr, i) => {
-        switch (curr.type){
-		case "gmb":
-            precalStationList.push({"name": curr.name,
-                                    "url": `https://data.etagmb.gov.hk/eta/route-stop/${curr["route-id"]}/${curr["route-seq"]}/${curr["stop-seq"]}`}
-                                    );
-			break;
-        case "kmb":
-			precalStationList.push({"name": curr.name,
-                                    "url": `https://data.etabus.gov.hk/v1/transport/kmb/eta/${curr["stop-id"]}/${curr["route-id"]}/${curr["route-seq"]}`}
-                                    );
-			break;
-        case "ctb":
-			precalStationList.push({"name": curr.name,
-                                    "url": `https://rt.data.gov.hk/v2/transport/citybus/eta/ctb/${curr["stop-id"]}/${curr["route-id"]}`}
-                                    );
-			break;
+    "11Z": {
+        url: "",
+        type: "gmb",
+        content: "",
+    },
+
+    "11MZ": {
+        url: "",
+        type: "gmb",
+        content: "",
+    },
+
+
+    "11SY": {
+        url: "",
+        type: "gmb",
+        content: "",
+    },
+
+    "11SZ": {
+        url: "",
+        type: "gmb",
+        content: "",
+    },
+
+    "91Z": {
+        url: "",
+        type: "kmb",
+        content: "",
+    },
+
+    "91MY": {
+        url: "",
+        type: "kmb",
+        content: "",
+    },
+
+    "91MZ": {
+        url: "",
+        type: "kmb",
+        content: "",
+    },
+
+    "91PZ": {
+        url: "",
+        type: "kmb",
+        content: "",
+    },
+
+    "291PY": {
+        url: "",
+        type: "kmb",
+        content: "",
+    },
+
+    "792MZ": {
+        url: "",
+        type: "ctb",
+        content: "",
+    }
+};
+
+function precalStation(stnList) {
+    // consider moving this out such that each route calls precal once
+    for (const [stnKey, stnAtt] of Object.entries(stnList)) {
+        switch (stnAtt.type) {
+            case "gmb":
+                content[stnKey].url = `https://data.etagmb.gov.hk/eta/route-stop/${stnAtt["route-id"]}/${stnAtt["route-seq"]}/${stnAtt["stop-seq"]}`;
+                break;
+            case "kmb":
+                content[stnKey].url = `https://data.etabus.gov.hk/v1/transport/kmb/eta/${stnAtt["stop-id"]}/${stnAtt["route-id"]}/${stnAtt["route-seq"]}`;
+                break;
+            case "ctb":
+                content[stnKey].url = `https://rt.data.gov.hk/v2/transport/citybus/eta/ctb/${stnAtt["stop-id"]}/${stnAtt["route-id"]}`;
+                break;
         }
-	});
+    }
 }
 
 
 layoutList = {
     // works on overriding, first element overrides second and so on elements
+    // dow 0 Sun, 1 Mon
+
     // midnight 2 for 11S -> CHH 0000 dept
     // midnight 1 for 11S -> HAH 0030 dept
-	midnight2: {},
-	midnight1: {},
+    midnight2: {},
+    midnight1: {},
     // return peak -> 91P
-	peak: {},
-	normal:{
-	    dow: [1, 2, 3, 4, 5],
-	    startTime: [0, 0],
-	    endTime: [23, 59],
-	    layout: {
-	        S1: "792MZ",
-	        S2: "91MY",
-	        S3: "11MZ", 
-	        
-	    }
-	}
-	
+    peak: {},
+    // default + fallback
+    normal: {
+        dow: [-1, 0, 1, 2, 3, 4, 5, 6],
+        startTime: [0, 0],
+        endTime: [23, 59],
+        layout: {
+            S1: "91MZ",
+            S2: "91Z",
+            S3: "11Z",
+            N1: "792MZ",
+            N2: "91MY",
+            N3: "11MZ" //"11Y"], 
+        }
+    }
+
 
 
 }
 
-function checkTime(){
-	const now = new Date();
-	
+
+
+function updateLayout() {
+
+    for (const [layoutKey, rtNum] of Object.entries(layoutList.normal.layout)) {
+        updateStation(rtNum);
+        document.getElementById(layoutKey).innerText = content[rtNum].content;
+        document.getElementById(layoutKey+"Num").innerText = rtNum;
+    }
+    //document.getElementById(this).innerText = content.,)
 }
-    
 
+async function updateStation(routeNum) {
+    try {
+        const response = await fetch(content[routeNum].url);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        let data = await response.json();
+        var eta = "--";
+        if (content[routeNum]["type"] == "gmb") {
+            eta_str = data["data"]["eta"][0]["timestamp"]
+            time_diff = Date.parse(eta_str) - new Date()
 
-function updateStation(){
-        $.get({url: url, 
-            success: (data) =>{
+            if (time_diff <= 0) {
+
+                eta_str = data["data"]["eta"][1]["timestamp"]
+                time_diff = Date.parse(eta_str) - new Date()
+            }
+
+            eta = Math.floor(time_diff / 60000)
+
+        }
+
+        else if (content[routeNum]["type"] == "kmb") {
+            eta_str = data["data"][0]["eta"]
+            time_diff = Date.parse(eta_str) - new Date()
+
+            if (time_diff <= 0) {
+
+                eta_str = data["data"][1]["eta"]
+                time_diff = Date.parse(eta_str) - new Date()
+            }
+
+            eta = Math.floor(time_diff / 60000)
+
+        }
+        else if (content[routeNum]["type"] == "ctb") {
+            eta_str = data["data"][0]["eta"]
+            time_diff = Date.parse(eta_str) - new Date()
+
+            if (time_diff <= 0) {
+
+                eta_str = data["data"][1]["eta"]
+                time_diff = Date.parse(eta_str) - new Date()
+            }
+
+            eta = Math.floor(time_diff / 60000)
+
+        }
+        content[routeNum].content = eta;
+    }
+    catch (error) {
+        console.error(error.message);
+    }
+}
+
+function oldupdateStation() {
+    $.get({
+        url: url,
+        success: (data) => {
             eta = "--";
-            
-            if(curr["type"] == "gmb"){
+
+            if (curr["type"] == "gmb") {
                 eta_str = data["data"]["eta"][0]["timestamp"]
                 time_diff = Date.parse(eta_str) - new Date()
 
-                if(time_diff <= 0){
+                if (time_diff <= 0) {
 
                     eta_str = data["data"]["eta"][1]["timestamp"]
                     time_diff = Date.parse(eta_str) - new Date()
                 }
 
-                eta =  Math.floor(time_diff / 60000)
+                eta = Math.floor(time_diff / 60000)
 
             }
 
-            else if(curr["type"] == "kmb"){
+            else if (curr["type"] == "kmb") {
                 eta_str = data["data"][0]["eta"]
                 time_diff = Date.parse(eta_str) - new Date()
 
-                if(time_diff <= 0){
-                        
+                if (time_diff <= 0) {
+
                     eta_str = data["data"][1]["eta"]
                     time_diff = Date.parse(eta_str) - new Date()
                 }
 
-                eta =  Math.floor(time_diff / 60000)
+                eta = Math.floor(time_diff / 60000)
 
             }
-            else if(curr["type"] == "ctb"){
+            else if (curr["type"] == "ctb") {
                 eta_str = data["data"][0]["eta"]
                 time_diff = Date.parse(eta_str) - new Date()
 
-                if(time_diff <= 0){
-                        
+                if (time_diff <= 0) {
+
                     eta_str = data["data"][1]["eta"]
                     time_diff = Date.parse(eta_str) - new Date()
                 }
 
-                eta =  Math.floor(time_diff / 60000)
+                eta = Math.floor(time_diff / 60000)
 
             }
 
             $(`#${i}`).html(eta)
-		// without async, it complains CORS (cross site data transfer not same domain shit)
-        }})
-        //}, async: false}) 
+            // without async, it complains CORS (cross site data transfer not same domain shit)
+        }
+    })
+    //}, async: false}) 
 }
 
-
-$(document).ready( () =>{
-	//precalStation(station_list);
-	//setInterval(precalStation(station_list),18000000);
-    //updateStation();
-    //setInterval(updateStation, 5000);
-	startClock();
-})
 
 async function fetchTime(retries = 30, delay = 200) {
     for (let attempt = 1; attempt <= retries; attempt++) {
@@ -225,14 +364,23 @@ async function fetchTime(retries = 30, delay = 200) {
     }
 }
 
+dateDoW = -1;
+dateHour = -1;
+dateMinute = -1;
+
 async function startClock() {
-    let currentTime = await fetchTime();	
-	document.getElementById('timeSynced').innerText = "Last synced: " + currentTime.toLocaleTimeString();
-	console.log("Time synced successfully at: " + currentTime.toLocaleTimeString());
-	
+    let currentTime = await fetchTime();
+    document.getElementById('timeSynced').innerText = "Last synced: " + currentTime.toLocaleTimeString();
+    console.log("Time synced successfully at: " + currentTime.toLocaleTimeString());
+
     function updateClock() {
         currentTime = new Date(currentTime.getTime() + 1000);
         document.getElementById('time').innerText = currentTime.toLocaleTimeString();
+
+        // update global Day of Week, Hour, and Minute
+        dateDoW = currentTime.getDay();
+        dateHour = currentTime.getHours();
+        dateMinute = currentTime.getMinutes();
     }
 
     // Align first update with the next full second
@@ -241,17 +389,22 @@ async function startClock() {
         updateClock(); // First update precisely at the next full second
         setInterval(updateClock, 1000);
     }, msToNextSecond);
-	    
-	// Resync every hour
+
+    // Resync every hour
     setInterval(async () => {
         console.log("Resyncing clock...");
         currentTime = await fetchTime();
-		document.getElementById('timeSynced').innerText = "Last synced: "+currentTime.toLocaleTimeString();
-		console.log("Synced successfully at: " + currentTime.toLocaleTimeString());
+        document.getElementById('timeSynced').innerText = "Last synced: " + currentTime.toLocaleTimeString();
+        console.log("Synced successfully at: " + currentTime.toLocaleTimeString());
     }, 60 * 60 * 1000); // 60 minutes * 60 seconds * 1000 ms
 }
 
-// Update the time immediately
-//updateTime();
-// Optionally, update the time every minute
-//setInterval(updateTime, 60000);
+
+$(document).ready(() => {
+    //precalStation(station_list);
+    //setInterval(precalStation(station_list),18000000);
+    //updateStation();
+    precalStation(station_list);
+    setInterval(updateLayout, 5000);
+    //startClock();
+})
