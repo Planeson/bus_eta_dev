@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bus ETA Report</title>
@@ -11,60 +12,86 @@
         h1 {
             font-size: 120px;
             font-family: 'Open Sans';
-			font-weight: 600;
+            font-weight: 600;
             text-align: left;
         }
+
         td {
             border: 1px solid black;
             margin: 0;
             font-size: 150px;
             font-family: 'Open Sans';
-			font-weight: 600;
+            font-weight: 600;
+            text-align: center;
         }
+
         .p1 {
             font-size: 120px;
             font-family: 'Open Sans';
-			font-weight: 600;
+            font-weight: 600;
         }
+
         .p2 {
             font-size: 100px;
             font-family: 'Open Sans';
-			font-weight: 600;
+            font-weight: 600;
         }
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .header img {
             width: 200px;
             height: 200px;
         }
+
         .header span {
             margin-left: auto;
         }
+
         .header .title {
             font-size: 120px;
-            font-family: 'Open Sans'; 
-			font-weight: 600;
+            font-family: 'Open Sans';
+            font-weight: 600;
         }
+
         #time {
             font-size: 120px;
-            font-family: 'Open Sans'; 
-			font-weight: 600;
+            font-family: 'Open Sans';
+            font-weight: 600;
         }
-		#timeSynced {
+
+        #timeSynced {
             font-size: 40px;
-            font-family: 'Open Sans'; 
-			font-weight: 400;
+            font-family: 'Open Sans';
+            font-weight: 400;
+        }
+
+        .tdnum {
+            text-align: right;
+            padding-right: 20px;
+            /* Optional for spacing */
+            width: 29%;
+        }
+
+        .tddat {
+            text-align: right;
+            padding-left: 5px;
+            padding-right: 5px;
+            /* Optional for spacing */
+            width: 21%;
         }
     </style>
 </head>
+
 <body>
-    <div class="header", style ="align-items: left;">
+    <div class="header" , style="align-items: left;">
         <img src="logo-full-v2.0.png" alt="Logo" width="150" height="150">
         <div class="title">ETA | GitHub:&nbsp;</div>
-		<img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Rickrolling_QR_code.png" width="100" height="100">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Rickrolling_QR_code.png" width="100" height="100">
         <div style="display: flex; flex-direction: column; align-items: center;">
             <span id="time">Initializing</span>
             <span id="timeSynced">Last synced: syncing</span>
@@ -76,24 +103,25 @@
             <td colspan="2">North Gate</td>
         </tr>
         <tr>
-            <td><span id="S1Num"></span></td>
-            <td><span id="S1"></span></td>
-            <td><span id="N1Num"></span></td>
-            <td><span id="N1"></span></td>
+            <td class="tdnum"><span id="S1Num"></span></td>
+            <td class="tddat"><span id="S1"></span></td>
+            <td class="tdnum"><span id="N1Num"></span></td>
+            <td class="tddat"><span id="N1"></span></td>
         </tr>
         <tr>
-            <td><span id="S2Num"></span></td>
-            <td><span id="S2"></span></td>
-            <td><span id="N2Num"></span></td>
-            <td><span id="N2"></span></td>
+            <td class="tdnum"><span id="S2Num"></span></td>
+            <td class="tddat"><span id="S2"></span></td>
+            <td class="tdnum"><span id="N2Num"></span></td>
+            <td class="tddat"><span id="N2"></span></td>
         </tr>
         <tr>
-            <td><span id="S3Num"></span></td>
-            <td><span id="S3"></span></td>
-            <td><span id="N3Num"></span></td>
-            <td><span id="N3"></span></td>
+            <td class="tdnum"><span id="S3Num"></span></td>
+            <td class="tddat"><span id="S3"></span></td>
+            <td class="tdnum"><span id="N3Num"></span></td>
+            <td class="tddat"><span id="N3"></span></td>
         </tr>
     </table>
     <p class="p2">nice</p>
 </body>
+
 </html>

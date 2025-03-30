@@ -197,7 +197,7 @@ content = {
 
     "--": {
         url: "",
-        type: "",
+        type: "--",
         content: "--",
     }
 };
@@ -286,21 +286,30 @@ layoutList = {
 
 // pull layout out to reduce access depth
 layout = {
-    S1: ["91MZ"],
-    S2: ["91Z"],
-    S3: ["11Z", "11Z", "104Y"],
-    N1: ["792MZ"],
-    N2: ["91MY"],
-    N3: ["11MZ", "11Y"],
+    S1: [],
+    S2: [],
+    S3: [],
+    N1: [],
+    N2: [],
+    N3: [],
 };
 
 async function updateLayout() {
     for (const [layoutKey, layoutAtt] of Object.entries(layoutList)) {
+        console.log(layoutKey, dateDoW);
+        console.log(layoutAtt.dow.includes(dateDoW));
+        console.log(layoutAtt.startTime[0] <= dateHour);
+        console.log(layoutAtt.startTime[1] <= dateMinute);
+        console.log(layoutAtt.endTime[0] >= dateHour);
+        console.log(layoutAtt.endTime[1] >= dateMinute);
         if (layoutAtt.dow.includes(dateDoW)
-            && layoutAtt.startTime[0] <= dateHour
-            && layoutAtt.startTime[1] <= dateMinute
-            && layoutAtt.endTime[0] >= dateHour
-            && layoutAtt.endTime[1] >= dateMinute) {
+            && (layoutAtt.startTime[0] <= dateHour
+                || layoutAtt.startTime[0] == dateHour
+                && layoutAtt.startTime[1] <= dateMinute)
+            && (layoutAtt.endTime[0] >= dateHour
+                || layoutAtt.endTime[0] == dateHour
+                && layoutAtt.endTime[1] >= dateMinute)
+        ) {
             layout = layoutAtt.layout;
             return;
         }
@@ -450,5 +459,6 @@ async function startClock() {
 // initialization
 $(document).ready(() => {
     startClock();
+    // display started by clock
     precalStation(station_list);
 })
