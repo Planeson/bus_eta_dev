@@ -296,17 +296,11 @@ layout = {
 
 async function updateLayout() {
     for (const [layoutKey, layoutAtt] of Object.entries(layoutList)) {
-        console.log(layoutKey, dateDoW);
-        console.log(layoutAtt.dow.includes(dateDoW));
-        console.log(layoutAtt.startTime[0] <= dateHour);
-        console.log(layoutAtt.startTime[1] <= dateMinute);
-        console.log(layoutAtt.endTime[0] >= dateHour);
-        console.log(layoutAtt.endTime[1] >= dateMinute);
         if (layoutAtt.dow.includes(dateDoW)
-            && (layoutAtt.startTime[0] <= dateHour
+            && (layoutAtt.startTime[0] < dateHour
                 || layoutAtt.startTime[0] == dateHour
-                && layoutAtt.startTime[1] <= dateMinute)
-            && (layoutAtt.endTime[0] >= dateHour
+                && layoutAtt.startTime[1] < dateMinute)
+            && (layoutAtt.endTime[0] > dateHour
                 || layoutAtt.endTime[0] == dateHour
                 && layoutAtt.endTime[1] >= dateMinute)
         ) {
