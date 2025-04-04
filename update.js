@@ -125,74 +125,74 @@ content = {
     "11Y": {
         url: "",
         type: "gmb",
-        content: "",
+        content: "--",
     },
 
     "11Z": {
         url: "",
         type: "gmb",
-        content: "",
+        content: "--",
     },
 
     "11MZ": {
         url: "",
         type: "gmb",
-        content: "",
+        content: "--",
     },
 
 
     "11SY": {
         url: "",
         type: "gmb",
-        content: "",
+        content: "--",
     },
 
     "11SZ": {
         url: "",
         type: "gmb",
-        content: "",
+        content: "--",
     },
 
     "104Y": {
         url: "",
         type: "gmb",
-        content: "",
+        content: "--",
     },
 
     "91Z": {
         url: "",
         type: "kmb",
-        content: "",
+        content: "--",
     },
 
     "91MY": {
         url: "",
         type: "kmb",
-        content: "",
+        content: "--",
     },
 
     "91MZ": {
         url: "",
         type: "kmb",
-        content: "",
+        content: "--",
     },
 
     "91PZ": {
         url: "",
         type: "kmb",
-        content: "",
+        content: "--",
     },
 
     "291PY": {
         url: "",
         type: "kmb",
-        content: "",
+        content: "--",
     },
 
     "792MZ": {
         url: "",
         type: "ctb",
-        content: "",
+        content: "--",
     },
 
     "--": {
@@ -228,7 +228,7 @@ layoutList = {
     // midnight 1 for 11S -> CHH 0000 dept
     midnight2: {
         dow: [-1, 0, 1, 2, 3, 4, 5, 6],
-        startTime: [0, 30],
+        startTime: [0, 35],
         endTime: [5, 50],
         layout: {
             S1: ["11SZ"],
@@ -241,15 +241,15 @@ layoutList = {
     },
     midnight1: {
         dow: [-1, 0, 1, 2, 3, 4, 5, 6],
-        startTime: [0, 0],
+        startTime: [0, 5],
         endTime: [5, 50],
         layout: {
             S1: ["11SZ"],
-            S2: ["--"],
+            S2: ["11Z"],
             S3: ["--"],
             N1: ["11SY"],
-            N2: ["--"],
-            N3: ["--"],
+            N2: ["11MZ"],
+            N3: ["11Y"],
         }
     },
     // return peak -> 91P + 291P (lol)
@@ -282,8 +282,6 @@ layoutList = {
     }
 }
 
-// todo: add layouts, fix seconds, move parsing out, change content[key].content to eta timestamp, then move screen update out of api calls
-
 // pull layout out to reduce access depth
 layout = {
     S1: [],
@@ -294,6 +292,7 @@ layout = {
     N3: [],
 };
 
+// checks the layout to be used and set layout to it
 async function updateLayout() {
     for (const [layoutKey, layoutAtt] of Object.entries(layoutList)) {
         if (layoutAtt.dow.includes(dateDoW)
@@ -310,22 +309,38 @@ async function updateLayout() {
     }
 }
 
-// REWRITE
-// first put fetched data into content, then pull from content and cal on it
-async function updateData() {
+// updates display every second using existing data
+async function updateDisplay() {
     for (const [layoutKey, rtList] of Object.entries(layout)) {
         const displayTime = 3 // 2 seconds each for flipping displays
         cycleLength = displayTime * rtList.length;
         rtNum = rtList[Math.floor((dateSecond % cycleLength) / displayTime)];
-        if (rtNum != "") {
-            updateStation(rtNum);
+
+        // short-circuit evaluation, if first condition false everything skipped
+        if (rtNum != "" && (content[rtNum].type == "gmb" || content[rtNum].type == "kmb" || content[rtNum].type == "ctb") && (content[rtNum].content != "--") && content[rtNum].content) {
+            delta = Date.parse(content[rtNum].content) - currentTime;
+            document.getElementById(layoutKey).innerText = (Math.floor(delta / 60000)).toString() + ":" + (Math.floor(delta / 1000) % 60).toString().padStart(2, '0');
+            document.getElementById(layoutKey + "Num").innerText = rtNum.slice(0, -1);
+
+        }
+        // for "--" rtNum or invalid ETA (content "--")
+        else if (rtNum != "") {
             document.getElementById(layoutKey).innerText = content[rtNum].content;
             document.getElementById(layoutKey + "Num").innerText = rtNum;
         }
     }
 }
+// calls api for layout items every (10 (adjustable)) seconds
+async function updateData() {
+    for (const [layoutKey, rtList] of Object.entries(layout)) {
+        for (var rtNum of rtList) {
+            if (rtNum != "") {
+                updateStation(rtNum);
+            }
+        }
+    }
+}
 
-// REWRITE
 // takes url and puts eta timestamp into content
 async function updateStation(routeNum) {
     if (routeNum == "--") { return; }
@@ -335,51 +350,31 @@ async function updateStation(routeNum) {
             throw new Error(`Response status: ${response.status}`);
         }
         let data = await response.json();
-        var eta = "--";
-        if (content[routeNum]["type"] == "gmb") {
-            eta_str = data["data"]["eta"][0]["timestamp"]
-            time_diff = Date.parse(eta_str) - new Date()
 
-            if (time_diff <= 480000) {
+        routeType = content[routeNum]["type"];
+        let etaFieldPath;
 
-                eta_str = data["data"]["eta"][1]["timestamp"]
-                time_diff = Date.parse(eta_str) - new Date()
-            }
-
-            eta = (Math.floor(time_diff / 60000)).toString() + ":" + (Math.floor(time_diff / 1000) % 60).toString().padStart(2, '0');
-
+        if (routeType === "gmb") {
+            etaFieldPath = data["data"]["eta"].map(item => item["timestamp"]);
+        } else if (["kmb", "ctb"].includes(routeType)) {
+            etaFieldPath = data["data"].map(item => item["eta"]);
         }
 
-        else if (content[routeNum]["type"] == "kmb") {
-            eta_str = data["data"][0]["eta"]
-            time_diff = Date.parse(eta_str) - new Date()
-
-            if (time_diff <= 480000) {
-
-                eta_str = data["data"][1]["eta"]
-                time_diff = Date.parse(eta_str) - new Date()
+        if (etaFieldPath && etaFieldPath.length > 0) {
+            for (i = 0; i < 3; ++i) {
+                let time_diff = Date.parse(etaFieldPath[i]) - currentTime;
+                if (time_diff > 480000 || etaFieldPath.length < (i + 2)) {
+                    content[routeNum].content = etaFieldPath[i];
+                    return;
+                }
             }
-
-            eta = (Math.floor(time_diff / 60000)).toString() + ":" + (Math.floor(time_diff / 1000) % 60).toString().padStart(2, '0');
-
+            content[routeNum].content = "--"
+            return;
         }
-        else if (content[routeNum]["type"] == "ctb") {
-            eta_str = data["data"][0]["eta"]
-            time_diff = Date.parse(eta_str) - new Date()
-
-            if (time_diff <= 480000) {
-
-                eta_str = data["data"][1]["eta"]
-                time_diff = Date.parse(eta_str) - new Date()
-            }
-
-            eta = (Math.floor(time_diff / 60000)).toString() + ":" + (Math.floor(time_diff / 1000) % 60).toString().padStart(2, '0');
-
-        }
-        content[routeNum].content = eta;
     }
     catch (error) {
         console.error(error.message);
+        console.log(routeNum);
     }
 }
 
@@ -414,8 +409,9 @@ dateMinute = -1;
 dateSecond = -1;
 
 // initializes clock
+var currentTime;
 async function startClock() {
-    let currentTime = await fetchTime();
+    currentTime = await fetchTime();
     document.getElementById('timeSynced').innerText = "Last synced: " + currentTime.toLocaleTimeString();
     console.log("Time synced successfully at: " + currentTime.toLocaleTimeString());
 
@@ -438,7 +434,8 @@ async function startClock() {
     setTimeout(() => {
         updateClock(); // First update precisely at the next full second
         setInterval(updateClock, 1000);
-        setInterval(updateData, 1000);
+        setInterval(updateDisplay, 1000);
+        setInterval(updateData, 10000);
     }, msToNextSecond);
 
     // Resync every hour
