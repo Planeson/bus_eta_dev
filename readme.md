@@ -2,12 +2,12 @@
 
 This was made because it was annoying to take out phone and check how long until bus arrives and then run up when it was too late. With this, I can be constantly reminded when to leave the lab.
 
-First project by Side project and Yapping sub team.
+First project by Side project and Yapping sub team of @RedBirdRacing.
 
 ## Versions
-V1 made by marco lk network and Nicholas did some shit to it
+V1 made by marco lk network and @Nexolas520 did some shit to it
 
-V2 is a from-the-ground-up rewrite of the Javascript component used to update the ETA and clock by Planeson, aimed to increase functionality and efficiency.
+V2 is a from-the-ground-up rewrite of the Javascript component used to update the ETA and clock by @Planeson, aimed to increase functionality and efficiency.
 
 ## Notes
 Room is left for using slots for non-ETA objects like images and animations, as well as replacing route numbers with actual displays.
