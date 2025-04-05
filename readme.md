@@ -24,7 +24,7 @@ Layout is updated every minute. The cycling is done every 3 seconds (const displ
 ![Screenshot](screenshot.jpg)
 V1
 
-![Screenshot](ScreenshotV2.jpg)
+![Screenshot](ScreenshotV2.png)
 V2
 
 Meant for 1080p displays.
