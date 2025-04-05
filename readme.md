@@ -2,28 +2,28 @@
 
 This was made because it was annoying to take out phone and check how long until bus arrives and then run up when it was too late. With this, I can be constantly reminded when to leave the lab.
 
-First project by Side project and Yapping sub team of @RedBirdRacing.
+First project by Side project and Yapping sub team of Red Bird Racing EVRT.
 
 ## Versions
-V1 made by marco lk network and @Nexolas520 did some shit to it
+V1 made by marco lk network and Nicholas(@Nexolas520) did some shit to it
 
-V2 is a from-the-ground-up rewrite of the Javascript component used to update the ETA and clock by @Planeson, aimed to increase functionality and efficiency.
+V2 is a from-the-ground-up rewrite of the JavaScript component used to update the ETA and clock by Carson(@Planeson), aimed to increase functionality and efficiency.
 
 ## Notes
 Room is left for using slots for non-ETA objects like images and animations, as well as replacing route numbers with actual displays.
 
 The clock is synced automatically every hour from https://www.timeapi.io/api/timezone/zone?timeZone=Asia%2FHong_Kong
-The clock is the central time-keeping component used to calculate delta from given ETA timestamp.
-If the page is paused, the clock is paused as well. Refresh page to get updated time.
+The clock is the central time-keeping component used to calculate delta from any given ETA timestamp.
+If the page is paused, the clock is paused as well. Refresh the page to get updated time.
 
 The html probably only works if started in a server due to CORS policies of the GMB ETA server. Optionally use a no-cors proxy to bypass this requirement.
 
-Font used is Open Sans.
+The font used is Open Sans.
 Reference: https://fonts.googleapis.com/css?family=Open Sans
 
-Layout is updated every minute. The cycling is done every 3 seconds (`const displayTime`).
+Layout is updated every minute. The cycling is done every 3 seconds (`const displayTime`). ETA is fetched every 10 seconds (doesn't mean data changes every 10 seconds, depends on ETA server).
 
-To optimize for GMB usability, ETA closer to 8 minutes is omitted. The second/third ETA would be used instead. This helps to make 11/M actually usable, if you trust GMB ETA.
+To optimize for GMB usability, ETA less than 8 minutes is omitted. The second/third ETA would be used instead. This helps to make 11/M actually usable, if you trust GMB ETA.
 
 ## Screenshot
 ![Screenshot](screenshot.jpg)
@@ -32,7 +32,7 @@ V1
 ![Screenshot](ScreenshotV2.png)
 V2
 
-Meant for 1080p displays. For other resolution, you are suggested to simply zoom in and out.
+Meant for 1080p displays. For other resolutions, you are suggested to simply zoom in and out.
 
 
 
