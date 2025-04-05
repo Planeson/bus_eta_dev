@@ -219,7 +219,10 @@ async function precalStation(routeList) {
     }
 }
 
-// list of what layout (combination of 6 routes/items) to use
+// list of what layout to use
+// each layout consist of 6 slots, each being an array of strings (route number)
+// to add cycling, simply have multiple item in a single array (slot)
+// to make a certain route show longer, simply repeat its listing.
 layoutList = {
     // works on overriding, first element overrides second and so on elements
     // date of week dow : 0 Sun, 1 Mon
@@ -255,11 +258,25 @@ layoutList = {
     // return peak -> 91P + 291P (lol)
     peak: {
         dow: [1, 2, 3, 4, 5],
+        startTime: [17, 0],
+        endTime: [18, 0],
+        layout: {
+            S1: ["91MZ", "91Z"],
+            S2: ["91PZ", "291PY"],
+            S3: ["11Z", "11Z", "104Y"],
+            N1: ["792MZ"],
+            N2: ["91MY"],
+            N3: ["11MZ", "11Y"],
+        }
+    },
+    // early return peak -> 91P
+    earlyPeak: {
+        dow: [1, 2, 3, 4, 5],
         startTime: [16, 0],
         endTime: [18, 40],
         layout: {
             S1: ["91MZ", "91Z"],
-            S2: ["91PZ", "291PY"],
+            S2: ["91PZ"],
             S3: ["11Z", "11Z", "104Y"],
             N1: ["792MZ"],
             N2: ["91MY"],
@@ -281,7 +298,7 @@ layoutList = {
         }
     },
     // default + fallback
-    fullday: {
+    fullDay: {
         dow: [-1, 0, 1, 2, 3, 4, 5, 6],
         startTime: [0, 0],
         endTime: [23, 59],
@@ -312,7 +329,7 @@ async function updateLayout() {
         if (layoutAtt.dow.includes(dateDoW)
             && (layoutAtt.startTime[0] < dateHour
                 || layoutAtt.startTime[0] == dateHour
-                && layoutAtt.startTime[1] < dateMinute)
+                && layoutAtt.startTime[1] <= dateMinute)
             && (layoutAtt.endTime[0] > dateHour
                 || layoutAtt.endTime[0] == dateHour
                 && layoutAtt.endTime[1] >= dateMinute)
@@ -326,7 +343,7 @@ async function updateLayout() {
 // updates display every second using existing data
 async function updateDisplay() {
     for (const [layoutKey, rtList] of Object.entries(layout)) {
-        const displayTime = 3 // 2 seconds each for flipping displays
+        const displayTime = 3 // 3 seconds each for flipping displays
         cycleLength = displayTime * rtList.length;
         rtNum = rtList[Math.floor((dateSecond % cycleLength) / displayTime)];
 
@@ -426,12 +443,12 @@ dateSecond = -1;
 var currentTime;
 async function startClock() {
     currentTime = await fetchTime();
-    document.getElementById('timeSynced').innerText = "Last synced: " + currentTime.toLocaleTimeString();
-    console.log("Time synced successfully at: " + currentTime.toLocaleTimeString());
+    document.getElementById('timeSynced').innerText = "Last synced: " + currentTime.toTimeString().split(' ')[0];
+    console.log("Time synced successfully at: " + currentTime.toTimeString().split(' ')[0]);
 
     function updateClock() {
         currentTime = new Date(currentTime.getTime() + 1000);
-        document.getElementById('time').innerText = currentTime.toLocaleTimeString();
+        document.getElementById('time').innerText = currentTime.toTimeString().split(' ')[0];
 
         // update global Day of Week, Hour, and Minute
         dateDoW = currentTime.getDay();
@@ -456,8 +473,8 @@ async function startClock() {
     setInterval(async () => {
         console.log("Resyncing clock...");
         currentTime = await fetchTime();
-        document.getElementById('timeSynced').innerText = "Last synced: " + currentTime.toLocaleTimeString();
-        console.log("Synced successfully at: " + currentTime.toLocaleTimeString());
+        document.getElementById('timeSynced').innerText = "Last synced: " + currentTime.toTimeString().split(' ')[0];
+        console.log("Synced successfully at: " + currentTime.toTimeString().split(' ')[0]);
     }, 60 * 60 * 1000); // 60 minutes * 60 seconds * 1000 ms
 }
 
