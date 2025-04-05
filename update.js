@@ -266,15 +266,29 @@ layoutList = {
             N3: ["11MZ", "11Y"],
         }
     },
-    // default + fallback
+    // no 104
     normal: {
+        dow: [-1, 0, 1, 2, 3, 4, 5, 6],
+        startTime: [0, 0],
+        endTime: [20, 55],
+        layout: {
+            S1: ["91MZ"],
+            S2: ["91Z"],
+            S3: ["11Z", "11Z", "104Y"],
+            N1: ["792MZ"],
+            N2: ["91MY"],
+            N3: ["11MZ", "11Y"],
+        }
+    },
+    // default + fallback
+    fullday: {
         dow: [-1, 0, 1, 2, 3, 4, 5, 6],
         startTime: [0, 0],
         endTime: [23, 59],
         layout: {
             S1: ["91MZ"],
             S2: ["91Z"],
-            S3: ["11Z", "11Z", "104Y"],
+            S3: ["11Z"],
             N1: ["792MZ"],
             N2: ["91MY"],
             N3: ["11MZ", "11Y"],
