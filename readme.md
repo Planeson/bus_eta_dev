@@ -4,9 +4,12 @@ This was made because it was annoying to take out phone and check how long until
 
 First project by Side project and Yapping sub team.
 
+## Versions
 V1 made by marco lk network and Nicholas did some shit to it
 
 V2 is a from-the-ground-up rewrite of the Javascript component used to update the ETA and clock by Planeson, aimed to increase functionality and efficiency.
+
+## Notes
 Room is left for using slots for non-ETA objects like images and animations, as well as replacing route numbers with actual displays.
 
 The clock is synced automatically every hour from https://www.timeapi.io/api/timezone/zone?timeZone=Asia%2FHong_Kong
@@ -18,16 +21,18 @@ The html probably only works if started in a server due to CORS policies of the 
 Font used is Open Sans.
 Reference: https://fonts.googleapis.com/css?family=Open Sans
 
-Layout is updated every minute. The cycling is done every 3 seconds (const displayTime).
+Layout is updated every minute. The cycling is done every 3 seconds (`const displayTime`).
 
-**Screenshot**
+To optimize for GMB usability, ETA closer to 8 minutes is omitted. The second/third ETA would be used instead. This helps to make 11/M actually usable, if you trust GMB ETA.
+
+## Screenshot
 ![Screenshot](screenshot.jpg)
 V1
 
 ![Screenshot](ScreenshotV2.png)
 V2
 
-Meant for 1080p displays.
+Meant for 1080p displays. For other resolution, you are suggested to simply zoom in and out.
 
 
 
