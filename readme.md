@@ -24,6 +24,8 @@ Layout is updated every minute. The cycling is done every 3 seconds (`const disp
 
 To optimize for GMB usability, ETA less than 8 minutes is omitted. The second/third ETA would be used instead. This helps to make 11/M actually usable, if you trust GMB ETA.
 
+Using Firefox breaks the font rendering and the page looks horrible.
+
 ## Screenshot
 ![V1 screenshot](screenshot.jpg)
 V1
