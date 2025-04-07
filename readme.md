@@ -4,6 +4,8 @@ This was made because it was annoying to take out phone and check how long until
 
 First project by Side project and Yapping sub team of Red Bird Racing EVRT.
 
+V2 deployed on 2025-04-07.
+
 ## Versions
 V1 made by marco lk network and Nicholas(@Nexolas520) did some shit to it
 
@@ -16,7 +18,7 @@ The clock is synced automatically every hour from [timeapi.io](https://www.timea
 The clock is the central time-keeping component used to calculate delta from any given ETA timestamp.
 If the page is paused, the clock is paused as well. Refresh the page to get updated ETAs.
 
-The html probably only works if started in a server due to CORS policies of the GMB ETA server. Optionally use a no-cors proxy to bypass this requirement.
+The HTML probably only works if started in a server due to CORS policies of the GMB ETA server. Optionally use a no-cors proxy to bypass this requirement.
 
 The font used is [Open Sans](<https://fonts.googleapis.com/css?family=Open Sans>).
 
@@ -27,11 +29,7 @@ To optimize for GMB usability, ETA less than 8 minutes is omitted. The second/th
 Using Firefox breaks the font rendering and the page looks horrible.
 
 ## Screenshot
-![V1 screenshot](screenshot.jpg)
-V1
-
 ![V2 screenshot](ScreenshotV2.png)
-V2
 
 Meant for 1080p displays. For other resolutions, you are suggested to simply zoom in and out.
 
